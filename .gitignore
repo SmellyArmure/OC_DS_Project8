@@ -1,7 +1,10 @@
 __pycache__
 .ipynb_checkpoints
 DATA
+-archives
+old_scripts
 RESOURCE
+INSTALL
 AWS
 .log
 NOTEBOOKS/.py_files
