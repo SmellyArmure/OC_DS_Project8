@@ -43,7 +43,8 @@ data_path = os.path.join("./DATA/fruits-360", PREFIX)
 # bucket='ocfruitpictures'
 # n_dir='data'
 # data_path = 's3a://{}/{}/{}'.format(bucket, n_dir, PREFIX)
-images_df = ImageSchema.readImages(data_path, recursive=True).repartition(12)
+images_df = ImageSchema.readImages(data_path, recursive=True) # .repartition(12)
+images_df.show()
 
 ## Features extraction (Transfer Learning) using Sparkdl
 
@@ -84,11 +85,12 @@ df_ = df_.withColumn('labels', split_col.getItem(0))
 df_ = df_.withColumnRenamed("image", "path")
 
 results_df = df_.select('path','pca_features','labels')
-# results_df.show()
+results_df.show()
+
 # store to local
-path_res = "./RESULTS"
+path_res = "./RESULTS/loc.csv"
 # store to s3
 # path_res = "s3a://ocfruitpictures/results/res1"
-results_df.write.mode('overwrite').parquet(path_res)
-
-# input("Press Ctrl + C to escape !")
+# results_df.write.mode('overwrite').parquet(path_res)
+results_df.write.mode('overwrite').csv(path_res)
+# input("Press Ctrl + C to escape !"

@@ -17,11 +17,11 @@ with open(path_cred,'r') as f:
 ID = str(msg).split('\n')[1].split(',')[2]
 KEY = str(msg).split('\n')[1].split(',')[3]
 
+
 ## Define the details of the SparkSession
 # spark = SparkSession.builder.appName('FeatExtraction').getOrCreate()
-spark = SparkSession.builder.appName('FeatExtraction')\
-                .config("spark.sql.shuffle.partitions",12)\
-                .getOrCreate()
+spark = SparkSession.builder.appName('FeatExt_EMR').getOrCreate()
+                #.config("spark.sql.shuffle.partitions",12)\
                 # .config("spark.executor.memory", "2g")\
 
 sc = spark.sparkContext.getOrCreate()
@@ -38,7 +38,7 @@ import sparkdl
 
 from pyspark.ml.image import ImageSchema
 # SAMPLE (25 pict), SAMPLE2 (815 pict), Test (20k pict), Training (60k pict)
-PREFIX = 'SAMPLE'
+PREFIX = 'Test'
 
 # # Option1: Get local data
 # data_path = os.path.join("./DATA/fruits-360", PREFIX)
@@ -47,7 +47,7 @@ bucket='ocfruitpictures'
 n_dir='data'
 data_path = 's3a://{}/{}/{}'.format(bucket, n_dir, PREFIX)
 
-images_df = ImageSchema.readImages(data_path, recursive=True).repartition(12)
+images_df = ImageSchema.readImages(data_path, recursive=True).repartition(10)
 
 ## Features extraction (Transfer Learning) using Sparkdl
 
@@ -92,7 +92,8 @@ results_df = df_.select('path','pca_features','labels')
 # # store to local
 # path_res = "./RESULTS"
 # store to s3
-path_res = "s3a://ocfruitpictures/results/RESULTS_samp2"
+path_res = "s3a://ocfruitpictures/RESULTS/RESULTS_EMR_Test"
 results_df.write.mode('overwrite').parquet(path_res)
+# results_df.write.mode('overwrite').csv(path_res)
 
 # input("Press Ctrl + C to escape !")
